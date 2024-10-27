@@ -1,0 +1,31 @@
+Here are the approximate number of strips you should be getting.
+
+The "valence" of a triangle is its number of adjacent non-strip triangles.
+
+200:
+
+  45 strips with no optimizations
+  38 strips using minimum-valence starting triangle
+  15 strips using minimum-valence starting and next triangles
+
+  (can get 2 strips using a different algorithm)
+
+  0.32 seconds
+
+1000:
+
+  43 strips using minimum-valence starting and next triangles
+
+  (can get 2 strips using a different algorithm)
+
+  0.35 seconds
+
+10000:
+
+  466 strips using minimum-valence starting and next triangles
+
+   (can get 5 strips using a different algorithm)
+
+  1.83 seconds
+
+Times are on an Intel i5-6600 CPU @ 3.30GHz

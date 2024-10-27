@@ -1,0 +1,125 @@
+CMPE/CISC 365 Assignment 2
+
+Due Thursday, Octorber 31 at noon.
+
+Undergraduates may work in groups of two.  Graduate students must work
+individually.
+
+
+
+In this assignment you will implement a greedy algorithm to build
+"triangle strips" in a triangle mesh.
+
+To see a triangle mesh, run the code with "data/200" on the command
+line, like this:
+
+    python3 tristrips.py data/200
+
+No strips will be shown ... just a set of 200 coloured triangles with
+a dot (signifying the end of a triangle strip) in the middle of each
+triangle.
+
+A triangle strip is a sequence of triangles, t_1, t_2, ... t_n, such
+that t_{i} is adjacent to t_{i+1} (that is, they share an edge) and no
+triangle occurs more than once in the sequence.  Note that a triangle
+by itself is a strip with n=1.
+
+In computer graphics, it can be three times more efficient to render a
+triangle mesh as a small set of triangle strips than as a set of
+individual triangles.  Longer triangle strips give more efficient
+rendering than shorter strips.
+
+So the goal is to build a set of long triangle strips such that each
+triangle in the mesh is on exactly one strip.  Fewer, longer strips
+are better than more, shorter strips.  A single strip that includes
+all the triangles would be optimal.
+
+1. Get the tristrips.py code running.  Read all of the code and understand
+   how it works.
+
+   Note that you can click on triangles to get information and to set
+   the triangle's 'highlight1' and 'highlight2' flags.  This is useful
+   for debugging.
+
+   Note also that you can include the 'display' function in your code
+   to display the current strips, and to pause at that point.  This is
+   useful for debugging.
+
+   Note that you can press keys to change the display.  These are
+   found in keyCallback().
+
+   All of your coding should be done in buildTristrips().  You can add
+   your own functions that are called by your code inside
+   buildTristrips().  DO NOT MODIFY ANY OTHER OF THE PROVIDED CODE.
+
+2. Build a set of triangle strips that covers all of the given
+   triangles.  The goal is to make each strip as long as possible.
+
+   The triangle strips are built by setting the 'nextTri' and 'prevTri'
+   pointers of each triangle, which form a doubly-linked list of the
+   triangles on each strip.
+
+   Your code should start at some triangle that is not on a strip yet.
+   That forms a "singleton" strip of length 1.
+
+   Then your code should find an adjacent triangle that is not yet on
+   a strip (i.e. its 'nextTri' and 'prevTri' pointers are still
+   'None'), and add it to the strip of the current triangle by setting
+   the 'nextTri' and 'prevTri' pointers appropriately.  Then move to
+   that adjacent triangle and repeat this process from there.  Keep
+   going until no adjacent triangle can be added.
+
+   After no adjacent triangle can be added, start with another
+   triangle that is not a strip yet, and build a strip from there.
+   Keep doing this until all triangles have been considered as
+   strip-starting triangles.
+
+   This is, in some sense, a greedy algorithm: The algorithm keeps
+   adding an adjacent triangle to the current strip until it can do so
+   no longer.
+
+3. Once the above is working *completely*, modify your code to start a
+   strip more intelligently:
+
+   Start a strip from a triangle with a minimum number of adjacent
+   non-strip triangles, since triangles with fewer than three adjacent
+   non-strip triangles are in a corner (1 adjacent) or an edge (2
+   adjacent) and are likely to become the end triangle in some strip.
+
+4. Once the above is working *completely*, modify your code to choose
+   the next triangle in a strip more intelligently:
+
+   When adding a new triangle to the current strip, if more than
+   one choice of adjacent triangle exists, add the one that
+   *itself* has fewer adjacent non-strip triangles.  That tends to
+   make strips follow edges, which is better because a strip that
+   leaves an edge introduces a corner, which will cause some other
+   strip to stop prematurely.
+
+5. OPTIONALLY, further modify the algorithm to build better strips,
+   but keep it a greedy algorithm.  For example, consider looking two
+   triangles ahead, instead of just one triangle ahead.  If you do
+   this, describe your further modifications in the README.txt file.
+
+6. Once everything is working, remove all display() calls from your
+   OWN code so that the marker does not have to do that when testing
+   your code.  Leave the display() calls in main().
+
+To submit:
+
+   Submit two files with EXACTLY THESE NAMES.
+
+     README.txt   - containing the name, student number, and netID of each
+                    person working on the assignment.  Include here any
+                    comments you have for the TA. 
+
+     tristrips.py - the modified code, well commented.
+
+   YOU WILL LOSE MARKS IF YOU DO NOT SUBMIT TWO FILES WITH EXACTLY THE
+   NAMES ABOVE.
+
+   IN A GROUP OF TWO, ONLY ONE PERSON MAY SUBMIT THE ASSIGNMENT.  IF
+   YOUR GROUP SUBMITS TWO ASSIGNMENTS, YOU WILL LOSE MARKS.
+
+For marking, we will read your code for correctness, clarity, and
+quality, and we will run your code.
