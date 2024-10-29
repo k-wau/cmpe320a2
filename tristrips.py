@@ -229,18 +229,33 @@ def turn( a, b, c ):
 # This function does not return anything.  The strips are formed by
 # modifying the 'nextTri' and 'prevTri' pointers in each triangle.
 
+# i added type checking because i need autocomplete so badly
 
-def buildTristrips( triangles ):
+def buildTristrips( triangles: list[Triangle] ):
 
     count = 0
+    # we're gonna sort the triangles for least adjacent triangles
+    triangles.sort(key=lambda x: len(list(filter(lambda y: y.isOnStrip == False, x.adjTris))))
+    for t in triangles:
+        if not t.isOnStrip:
+            # start a chain
+            count += 1
+            t.isOnStrip = True
+            while True:
+                validList = list(filter(lambda x: x.isOnStrip == False, t.adjTris))
+                if len(validList) == 0:
+                    break
+                t.nextTri = validList[0]
+                validList[0].prevTri = t
+                validList[0].isOnStrip = True
+                t = validList[0]
+                triangles.sort(key=lambda x: len(list(filter(lambda x: x.isOnStrip == False, t.adjTris))))
 
     # [YOUR CODE HERE]
     #
     # Increment 'count' every time you *start* a new triStrip.
 
     print( 'Generated %d tristrips' % count )
-
-
 
 windowLeft   = None
 windowRight  = None
