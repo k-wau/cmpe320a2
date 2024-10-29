@@ -245,9 +245,11 @@ def buildTristrips( triangles: list[Triangle] ):
                 validList = list(filter(lambda x: x.isOnStrip == False, t.adjTris))
                 if len(validList) == 0:
                     break
+                # add initialization for the first triangle and add it to a triangle strip
                 t.nextTri = validList[0]
                 validList[0].prevTri = t
                 validList[0].isOnStrip = True
+                validList[0].colour = t.colour
                 t = validList[0]
                 triangles.sort(key=lambda x: len(list(filter(lambda x: x.isOnStrip == False, t.adjTris))))
 
