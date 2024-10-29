@@ -249,7 +249,9 @@ def buildTristrips( triangles: list[Triangle] ):
                 t.nextTri = validList[0]
                 validList[0].prevTri = t
                 validList[0].isOnStrip = True
+                # match colours of triangles in a strip
                 validList[0].colour = t.colour
+                # iterate through triangles
                 t = validList[0]
                 triangles.sort(key=lambda x: len(list(filter(lambda x: x.isOnStrip == False, t.adjTris))))
 
