@@ -244,26 +244,16 @@ def buildTristrips( triangles: list[Triangle] ):
                 validList = list(filter(lambda x: x.isOnStrip == False, t.adjTris))
                 if len(validList) == 0:
                     break
-                # add initialization for the first triangle and add it to a triangle strip
-                # t.nextTri = validList[0]
-                # validList[0].prevTri = t
-                # validList[0].isOnStrip = True
+                # find triangle in validList with the minimum number of adjacent triangles
+                minTri = min(validList, key=lambda x: len(list(filter(lambda y: y.isOnStrip == False, x.adjTris))))
+                t.nextTri = minTri
+                minTri.prevTri = t
+                minTri.isOnStrip = True
                 # match colours of triangles in a strip
-                # validList[0].colour = t.colour
+                minTri.colour = t.colour
                 # iterate through triangles
-                # t = validList[0]
-
-                # modified code with triangle strip starting at triangle with minimum adjacent triangles
-                # finds triangle in validList with the minimum number of adjacent triangles
-                nextTri = min(validList, key=lambda x: len(list(filter(lambda y: y.isOnStrip == False, x.adjTris))))
-                t.nextTri = nextTri
-                nextTri.prevTri = t
-                nextTri.isOnStrip = True
-                # match colours of triangles in a strip
-                nextTri.colour = t.colour
-                # iterate through triangles
-                t = nextTri
-                triangles.sort(key=lambda x: len(list(filter(lambda x: x.isOnStrip == False, t.adjTris))))
+                t = minTri
+            triangles.sort(key=lambda x: len(list(filter(lambda x: x.isOnStrip == False, t.adjTris))))
 
     # [YOUR CODE HERE]
     #
