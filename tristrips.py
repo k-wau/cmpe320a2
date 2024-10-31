@@ -229,31 +229,102 @@ def turn( a, b, c ):
 # This function does not return anything.  The strips are formed by
 # modifying the 'nextTri' and 'prevTri' pointers in each triangle.
 
+
+# -------------------------------------------------------------------------------------------------------------
 # i added type checking because i need autocomplete so badly
 
-def buildTristrips( triangles: list[Triangle] ):
-    count = 0
-    # we're gonna sort the triangles for least adjacent triangles
-    triangles.sort(key=lambda x: len(list(filter(lambda y: y.isOnStrip == False, x.adjTris))))
-    for t in triangles:
+# This is a pretty redundant function but it's the result of some refactored code that I did not want to rewrite
+def getNumAdjacents(triangle: Triangle):
+    return len(getAdjacents(triangle))
+
+# Checks the amount of valid adjacent triangles available
+def getAdjacents(triangle):
+    out = []
+    for t in triangle.adjTris:
         if not t.isOnStrip:
-            # start a chain
-            count += 1
+            out.append(t)
+    return out
+
+# Gets the minimum possible valence from a list of triangles.
+# This can be done in one line, but I don't like dense one liners.
+# There was a version of this that had nested lambda functions.
+def getMinValence( triangles: list[Triangle] ):
+    out = 4
+    for t in triangles:
+        out = min(getNumAdjacents(t), out)
+    return out
+
+def buildTristrips( triangles: list[Triangle] ):
+    # Count for our strips
+    count = 0
+
+    # We want to iterate over the triangles until we're done
+    while True:
+        # Find the best possible place to start, this could just find our t as well but it breaks our checker
+        minValence = getMinValence(filter(lambda x: x.isOnStrip == False, triangles))
+        t = 0
+
+        # Find the earliest triangle with minimal valence
+        for x in triangles:
+            if not x.isOnStrip and getNumAdjacents(x) == minValence:
+                t = x
+                break
+        
+        # We initialize t to be 0, so if the loop above doesn't find a match then we know we're done
+        if t == 0:
+            break
+        
+        # If we've made it this far, we're going to make a new strip
+        count += 1
+
+        while True:
+            # Update our t to be on the strip
             t.isOnStrip = True
-            while True:
-                validList = list(filter(lambda x: x.isOnStrip == False, t.adjTris))
-                if len(validList) == 0:
-                    break
-                # find triangle in validList with the minimum number of adjacent triangles
-                minTri = min(validList, key=lambda x: len(list(filter(lambda y: y.isOnStrip == False, x.adjTris))))
-                t.nextTri = minTri
-                minTri.prevTri = t
-                minTri.isOnStrip = True
-                # match colours of triangles in a strip
-                minTri.colour = t.colour
-                # iterate through triangles
-                t = minTri
-            triangles.sort(key=lambda x: len(list(filter(lambda x: x.isOnStrip == False, t.adjTris))))
+            # Check to see if we have a valid next step
+            if len(getAdjacents(t)) != 0:
+                # Get the least valent adjacent triangle
+                nextTri = getAdjacents(t)[0]
+                for x in getAdjacents(t):
+                    if getNumAdjacents(x) < getNumAdjacents(nextTri):
+                        nextTri = x
+                # Do our assignments and move on
+                t.nextTri = nextTri
+                nextTri.prevTri = t
+                nextTri.colour = t.colour
+                t = nextTri
+            else:
+                # In this case, there is no valid next triangle. Break and make a new strip.
+                break
+
+
+    # Just to reminisce on the code I wrote that gave me a HORRIBLE time complexity,
+    # (I didn't want to delete this because it ran and I was scared I'd need it)
+
+    # while trianglesCopy:
+    #     t = trianglesCopy[0]
+    #     trianglesCopy.remove(t)
+ 
+    #     if getNumAdjacents(t) == getMinValence(triangles):
+    #         # start a chain
+    #         count += 1
+    #         t.isOnStrip = True
+    #         while True:
+    #             validList = list(filter(lambda x: x.isOnStrip == False, t.adjTris))
+    #             if len(validList) == 0:
+    #                 break
+    #             # find triangle in validList with the minimum number of adjacent triangles
+    #             minTri = 0
+    #             for adj in t.adjTris:
+    #                 if not adj.isOnStrip:
+    #                     minTri = adj
+    #                     break
+    #             t.nextTri = minTri
+    #             minTri.prevTri = t
+    #             minTri.isOnStrip = True
+    #             # match colours of triangles in a strip
+    #             minTri.colour = t.colour
+    #                            # iterate through triangles
+    #             t = minTri
 
     # [YOUR CODE HERE]
     #
